@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Kumar's Home Appliances - Service Update Page</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="/static/css/sign-in.css" rel="stylesheet">
+  </head>
+  <body class="d-flex align-items-center py-4 bg-body-tertiary">
+    
+<main class="form-signin w-100 m-auto">
+  <form action="/update_service" method="POST" enctype="multipart/form-data">
+    <h1 class="h3 mb-3 fw-normal">Service-Update</h1>
+    {% if error %}
+      <p style="color: red;">{{error}}</p>
+    {% endif %}
+    <div style="display: block;">
+        <div>Service id: {{id}}</div>
+        <div>Service name: {{name}}</div>
+        <div>Service price: {{price}}</div>
+        <div>Service time_required: {{time_required}}</div>
+        <div>Service description: {{description}}</div>
+        <div>Service Location: {{location}}</div>
+        <div>Service Pincode: {{pincode}}</div>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="name" placeholder="Name" name="name">
+        <label for="name">Name</label>
+    </div>
+
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="price" placeholder="1000" name="price">
+        <label for="price">Service price</label>
+      </div>
+  
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="time_required" placeholder="4 days" name="time_required">
+        <label for="time_required">Time Required</label>
+      </div>
+  
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="description" placeholder="This service is for " name="description">
+        <label for="description">Description</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="location" name="location">
+        <label for="location">Location</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="pincode" name="pincode">
+        <label for="pincode">Pincode</label>
+      </div>
+      
+      <button class="btn btn-primary w-100 py-2" type="submit">Update</button>
+</form>
+
+</main>
+  </body>
+</html>

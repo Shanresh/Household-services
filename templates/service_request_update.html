@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Kumar's Home Appliances - Service Update Page</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="/static/css/sign-in.css" rel="stylesheet">
+  </head>
+  <body class="d-flex align-items-center py-4 bg-body-tertiary">
+    
+<main class="form-signin w-100 m-auto">
+  <form action="{{ url_for('service_request_update', id=service.id) }}" method="POST" enctype="multipart/form-data">
+    <h1 class="h3 mb-3 fw-normal">Service-Update</h1>
+    {% if error %}
+      <p style="color: red;">{{error}}</p>
+    {% endif %}
+    <div style="display: block;">
+        <div>Service name: {{service.name}}</div>
+        <div>Service Date Of Request: {{service.date_of_request}}</div>
+        <div>Service Date of Completion: {{service.date_of_completion}}</div>
+        <div>Your Remarks: {{service.customer_remarks}}</div>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="dor" placeholder="Name" name="dor" required>
+        <label for="dor">Date of Request</label>
+    </div>
+
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="doc" placeholder="1000" name="doc" required>
+        <label for="doc">Date of Completion</label>
+      </div>
+  
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="remarks" placeholder="Comments" name="remarks" required>
+        <label for="remarks">Remarks</label>
+      </div>
+      
+      <button class="btn btn-primary w-100 py-2" type="submit">Update</button>
+</form>
+
+</main>
+  </body>
+</html>
