@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Kumar's Home Appliances - SP Registration Page</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="/static/css/sign-in.css" rel="stylesheet">
+  </head>
+  <body class="d-flex align-items-center py-4 bg-body-tertiary">
+    
+<main class="form-signin w-100 m-auto">
+  <form action="/registerSP" method="POST" enctype="multipart/form-data">
+    <h1 class="h3 mb-3 fw-normal">Service-Professional Registration</h1>
+    {% if error %}
+      <p style="color: red;">{{error}}</p>
+    {% endif %}
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="name" placeholder="Name" name="name">
+        <label for="name">Name</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="username" placeholder="name@example.com" name="username">
+      <label for="username">Email address</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+      <label for="password">Password</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="experience" placeholder="experience" name="experience">
+      <label for="experience">Experience</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <select class="form-select" id="service_type" name="service_type">
+        <option value="AC">AC</option>
+        <option value="Fridge">Fridge</option>
+        <option value="FullHouseClean">FullHouseClean</option>
+        <option value="Water_RO_Service">Water RO Service</option>
+        <option value="Bathroom_Cleaning">Bathroom Cleaning</option>
+        <option value="Painting">Painting</option>
+      </select>
+      <label for="service_type">Select Service Type</label>
+    </div>
+
+    <div class="form-floating mb-3"></div>
+      <input type="file" name="attach_file" accept=".doc,.docx" required>
+      <label for="attach_file">Attach your Resume</label>
+    </div>
+    
+    <button class="btn btn-primary w-100 py-2" type="submit">Register</button>
+</form>
+
+</main>
+  </body>
+</html>

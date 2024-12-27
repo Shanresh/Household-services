@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+    <style>
+    .toggle-button {
+        width: 100px;
+    }
+    
+    .admin-dashboard {
+        position: relative;
+        padding: 20px;
+    }
+
+    .sign-out {
+        position: absolute;
+        top: 20px; /* Adjust as needed */
+        right: 20px; /* Adjust as needed */
+    }
+
+    .sign-out a {
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse; /* Ensure borders are collapsed */
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    th, td {
+        border: 1px solid black; 
+        padding: 10px;
+        text-align: left;
+    }
+    </style>
+</head>
+<body class="admin-dashboard">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+    {% for category, message in messages %}
+      <li class="flash {{ category }}">{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <h1 style="color: deeppink;">Welcome {{username}}</h1>
+    <h2 style="color: white;">Admin Dashboard</h2>
+    
+    <div class="sign-out">
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">Sign Out</a>
+    </div>
+    <div class="container mt-5">
+        <h1 style="color: rgb(19, 213, 67);">Service Professionals</h1>
+        {% if Professionals %}
+        <table style="background-color: blanchedalmond;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Service Type</th>
+                    <th>Experience</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th>File</th>
+                    <th>Delete User</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for professional in Professionals %}
+                <tr>
+                    <td>{{ professional.id }}</td>
+                    <td>{{ professional.name }}</td>
+                    <td>{{ professional.service_type }}</td>
+                    <td>{{ professional.experience }}</td>
+                    <td>{{ professional.status }}</td>
+                    <td>
+                        {% if professional.status == 'Active' %}
+                        <a href="{{ url_for('toggle_status', id=professional.id, action='block', user_type='professional') }}" class="btn btn-danger toggle-button">Block</a>
+                        {% else %}
+                        <a href="{{ url_for('toggle_status', id=professional.id, action='unblock', user_type='professional') }}" class="btn btn-success toggle-button">Unblock</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('download_file', professional_id=professional.id) }}" class="btn btn-primary">
+                            Download File
+                        </a>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_sp', id=professional.id) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: red;">No service professionals found.</p>
+        {% endif %}
+    </div>
+    <div class="container mt-5">
+        <h1 style="color: rgb(19, 213, 67);">Customer</h1>
+        {% if Customers %}
+        <table style="background-color: blanchedalmond;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in Customers %}
+                <tr>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.username }}</td>
+                    <td class="toggle-button">{{ customer.status }}</td>
+                    <td>
+                        {% if customer.status == 'Active' %}
+                        <a href="{{ url_for('toggle_status', id=customer.id, action='block', user_type='customer') }}" class="btn btn-danger toggle-button">Block</a>
+                        {% else %}
+                        <a href="{{ url_for('toggle_status', id=customer.id, action='unblock', user_type='customer') }}" class="btn btn-success toggle-button">Unblock</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_cus', id=customer.id) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: red;">No Customers found.</p>
+        {% endif %}
+    </div>
+    <div class="container mt-5">
+        <h1 style="color: rgb(19, 213, 67);">Services Available</h1>
+        {% if services %}
+        <table style="background-color: blanchedalmond;">
+            <thead>
+                <th>#</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Time required</th>
+                <th>Description</th>
+                <th>Delete Service</th>
+                <th>Update Service</th>
+                <th>Location</th>
+                <th>Pincode</th>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{service.name}}</td>
+                    <td>{{service.service_type}}</td>
+                    <td>{{service.price}}</td>
+                    <td>{{service.time_required}}</td>
+                    <td>{{service.description}}</td>
+                    <td>
+                        <form action="{{ url_for('delete_service', id=service.id) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('update_ser', id=service.id) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="btn btn-danger" style="background-color: blue">Update</button>
+                        </form>
+                    </td>
+                    <td>{{service.location}}</td>
+                    <td>{{service.pincode}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: red;">No Services Available</p>
+        {% endif %}
+        <br>
+        <main class="form-signin w-25 m-auto">
+            <form action="/add_service" method="POST">
+              <h1 class="h3 mb-3 fw-normal" style="color: white;">Add a Service</h1>
+              <div class="form-floating mb-3">
+                  <input type="text" class="form-control" id="name" name="name">
+                  <label for="name">Service Name</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <select class="form-select" id="service_type" name="service_type">
+                  <option value="AC">AC</option>
+                  <option value="Fridge">Fridge</option>
+                  <option value="FullHouseClean">FullHouseClean</option>
+                  <option value="Water_RO_Service">Water RO Service</option>
+                  <option value="Bathroom_Cleaning">Bathroom Cleaning</option>
+                  <option value="Painting">Painting</option>
+                </select>
+                <label for="service_type">Select Service Type</label>
+              </div>
+          
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="price" name="price">
+                <label for="price">Service price</label>
+              </div>
+          
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="time_required" name="time_required">
+                <label for="time_required">Time Required</label>
+              </div>
+          
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="description" name="description">
+                <label for="description">Description</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="location" name="location">
+                <label for="location">Location</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="pincode" name="pincode">
+                <label for="pincode">Pincode</label>
+              </div>
+              
+              <button class="btn btn-primary w-100 py-2" type="submit">Add</button>
+            </form>
+        {% if error %}
+            <p style="color: red;">{{error}}</p>
+        {% endif %}
+    </div>
+    <br>
+    <div class="container mt-5">
+        <h1 style="color: rgb(19, 213, 67);">Service Requests</h1>
+        {% if servicerequest %}
+        <table style="background-color: blanchedalmond;">
+            <thead>
+                <th>#</th>
+                <th>Service_ID</th>
+                <th>Service Name</th>
+                <th>Service Type</th>
+                <th>Customer_ID</th>
+                <th>Customer Name</th>
+                <th>Customer Remarks</th>
+                <th>Professional_ID</th>
+                <th>Professional Name</th>
+                <th>Professional Remarks</th>
+                <th>Date of Request</th>
+                <th>Date of Completion</th>
+                <th>Service Status</th>
+                <th>Delete Request</th>
+            </thead>
+            <tbody>
+                {% for service in servicerequest %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{service.service_id}}</td>
+                    <td>{{service.service_name}}</td>
+                    <td>{{service.service_type}}</td>
+                    <td>{{service.customer_id}}</td>
+                    <td>{{service.customer_name}}</td>
+                    <td>{{service.customer_remarks}}</td>
+                    <td>{{service.professional_id}}</td>
+                    <td>{{service.professional_name}}</td>
+                    <td>{{service.professional_remarks}}</td>
+                    <td>{{service.date_of_request}}</td>
+                    <td>{{service.date_of_completion}}</td>
+                    <td>{{service.service_status}}</td>
+                    <td>
+                        <form action="{{ url_for('delete_sr', id=service.id) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="btn btn-danger" style="background-color: blue">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: red;">No Services Requests Available</p>
+        {% endif %}
+    </div>
+    <br>
+    <br>
+    
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer Dashboard</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+    <style>
+    .toggle-button {
+        width: 100px;
+    }
+    
+    .admin-dashboard {
+        position: relative;
+        padding: 20px;
+    }
+
+    .sign-out {
+        position: absolute;
+        top: 20px; /* Adjust as needed */
+        right: 20px; /* Adjust as needed */
+    }
+
+    .sign-out a {
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse; /* Ensure borders are collapsed */
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    th, td {
+        border: 1px solid black; 
+        padding: 10px;
+        text-align: left;
+    }
+    </style>
+</head>
+<body class="Customer-dashboard">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+    {% for category, message in messages %}
+      <li class="flash {{ category }}">{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <h1 style="color: deeppink;">Welcome {{username}}</h1>
+    <h2 style="color: white;">Customer Dashboard</h2>
+    <div class="sign-out">
+      <a href="{{ url_for('logout') }}" class="btn btn-danger">Sign Out</a>
+    </div>
+    <br>
+    <br>
+    <div>
+      {% if error %}
+        <p style="color: red;">{{error}}</p>
+      {% else %}
+    <form action="/search_service" method="POST" style="align-content: center;width: 50%;">
+        <div class="row justify-content-center">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="location">Location</label>
+              <select class="form-control" id="location" name="location">
+                <option value="">Select Location</option>
+                {% for loc in locations %}
+                  <option value="{{ loc }}">{{ loc }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="service">Service</label>
+              <select class="form-control" id="service" name="service">
+                <option value="">Select Service</option>
+                {% for service in services %}
+                  <option value="{{ service }}">{{ service }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="pincode">Pincode</label>
+              <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Enter Pincode">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Search</button>
+    </form>
+    <br>
+    <div class="container mt-5">
+    <h1 style="color: rgb(19, 213, 67);">Available Services</h1>
+    {% if Available_Services %}
+    <form action="/request_service" method="POST">
+        <label for="service_select" class="h3 mb-3 fw-normal" style="color: white;">Request a Service:</label>
+        <select name="service_id" id="service_select" required>
+            {% for service in Available_Services %}
+            <option value="{{ service.id }}">{{ service.name }}-{{service.location}}-{{service.pincode}}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary w-100 py-2" type="submit">Request Service</button>
+    </form>
+      </ul>
+    {% else %}
+        <p style="color: red;">No services found for the selected criteria.</p>
+    {% endif %}
+    </div>
+
+    <div class="container mt-5">
+        <h1 style="color: rgb(19, 213, 67);">Service Requests</h1>
+        {% if servicerequests %}
+        <table style="background-color: blanchedalmond;">
+            <thead>
+                <th>#</th>
+                <th>Service Name</th>
+                <th>Customer Name</th>
+                <th>Professional Name</th>
+                <th>Date of Request</th>
+                <th>Date of Completion</th>
+                <th>Service Status</th>
+                <th>Action</th>
+                <th>Your Remarks</th>
+                <th>Update</th>
+            </thead>
+            <tbody>
+                {% for service in servicerequests %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{service.service_name}}</td>
+                    <td>{{service.customer_name}}</td>
+                    <td>{{service.professional_name}}</td>
+                    <td>{{service.date_of_request}}</td>
+                    <td>{{service.date_of_completion}}</td>
+                    <td>{{service.service_status}}</td>
+                    <td>
+                        {% if service.service_status == 'requested' or service.service_status == 'assigned' %}
+                        <a href="{{ url_for('toggle_request', id=service.id) }}" class="btn btn-danger toggle-button">Completed</a>
+                        {% endif %}
+                    </td>
+                    <td><p>{{service.customer_remarks.replace('\n', '<br>') | safe if service.customer_remarks else '' }}</p>
+                        <form action="/update_customer_remarks" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="servicereq_id" value="{{ service.id }}">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="customer_remarks" placeholder="customer_remarks " name="customer_remarks">
+                            <label for="customer_remarks">Your Remarks</label>
+                        </div>
+                        <button type="submit">
+                            <img src="/static/submit_icon.jpg" alt="Submit" style="width: 20px; height: 20px;">
+                        </button>
+                        </form>
+                    </td>
+                    <td>
+                      <form action="{{ url_for('service_req_upd', id=service.id) }}" method="GET">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                      </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: red;">You didn't request any Service</p>
+        {% endif %}
+    </div>
+    {% endif %}
+    </div>
+    <br>
+    <br>
